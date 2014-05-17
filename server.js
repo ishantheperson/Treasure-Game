@@ -1,14 +1,11 @@
-var express = require("express");
-var app = express();
-
 var port = 8080;
 
+var express = require("express");
+var app = express();
 app.use(express.static(__dirname + "/html"));
 
 var server = require("http").createServer(app).listen(port);
-
 var io = require("socket.io").listen(server);
-
 
 function Player(id) {
     this.id = id;
@@ -53,6 +50,6 @@ io.sockets.on("connection", function (socket) {
 
     socket.on("disconnect", function () {
         players.splice(id, 1);
-        sockets.broadcast.emit("removePlayer", { id: id });
+        socket.broadcast.emit("removePlayer", { id: id });
     });
 });

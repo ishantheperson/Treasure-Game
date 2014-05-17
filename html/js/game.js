@@ -5,21 +5,27 @@ var gameObjects = [];
 
 //#region Keyboard
 var keyboardState = {
-    leftDown: false,
-    rightDown: false
+    left: false,
+    right: false,
+    up: false,
+    down: false
 };
 
 function keyDown(event) {
     switch (event.keyCode) {
-        case 37: keyboardState.leftDown = true; break;
-        case 39: keyboardState.rightDown = true; break;
+        case 37: keyboardState.left = true; break;
+        case 38: keyboardState.up = true; break;
+        case 39: keyboardState.right = true; break;
+        case 40: keyboardState.down = true; break;
     }
 }
 
 function keyUp(event) {
     switch (event.keyCode) {
-        case 37: keyboardState.leftDown = false; break;
-        case 39: keyboardState.rightDown = false; break;
+        case 37: keyboardState.left = false; break;
+        case 38: keyboardState.up = false; break;
+        case 39: keyboardState.right = false; break;
+        case 40: keyboardState.down = false; break;
     }
 }
 //#endregion
@@ -71,8 +77,11 @@ function Player (name, image) {
     this.draw = function () {
         if (this.connected) {
             var positionChanged = false;
-            if (keyboardState.leftDown) { this.x -= this.speed; positionChanged = true; }
-            if (keyboardState.rightDown) { this.x += this.speed; positionChanged = true; }
+            if (keyboardState.left) { this.x -= this.speed; positionChanged = true; }
+            if (keyboardState.right) { this.x += this.speed; positionChanged = true; }
+
+            if (keyboardState.up) { this.y -= this.speed; positionChanged = true; }
+            if (keyboardState.down) { this.y += this.speed; positionChanged = true; }
 
             if (positionChanged) { this.socket.emit("position", { id: this.id, x: this.x, y: this.y }); }
 
