@@ -17,7 +17,11 @@
         <div class="content">        
             <h1>My Amazing Game With Dragons</h1>
             
-            <label>Name: <input type="text" id="playerName"></label><button id="join">Join</button><span id="error"></span>
+            <form>
+                <label>Name: <input type="text" id="playerName"></label>
+                <label>Server Address: <input type="text" id="address" value="ws://localhost:8080"></label>
+                <button id="join">Join</button><span id="error"></span>
+            </form>
 
             <div id="canvasWrapper">
                 <canvas id="game" width="250" height="250"></canvas>

@@ -30,7 +30,7 @@ function keyUp(event) {
 }
 //#endregion
 
-function Player (name, image) {
+function Player (name, image, address) {
     this.id = null;
 
     this.x = 50;
@@ -42,7 +42,7 @@ function Player (name, image) {
     this.speed = 2;
 
     this.connected = null;
-    this.socket = io.connect("ws://localhost:8080");
+    this.socket = io.connect(address);
 
     //#region Socket
     this.socket.on("connect", function () {
@@ -87,7 +87,7 @@ function Player (name, image) {
 
             context.drawImage(images["dragon" + image], this.x, this.y);
         }
-    }
+    };
 }
 
 function NetworkedPlayer(id, name, x, y, image) {
@@ -98,9 +98,9 @@ function NetworkedPlayer(id, name, x, y, image) {
     this.y = y;
     this.image = image;
 
-    this.draw = function() {
+    this.draw = function () {
         context.drawImage(images["dragon" + image], this.x, this.y);
-    }
+    };
 }
 
 
@@ -129,7 +129,7 @@ $(document).ready(function () {
         if (name === "") { $("#error").text("You must enter a name for the player"); return; }
         $("#join").prop("disabled", true);
 
-        gameObjects.push(new Player(name, Math.floor(Math.random() * 3) + 1));
+        gameObjects.push(new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val()));
         setInterval(draw, 10);
     });
 });
