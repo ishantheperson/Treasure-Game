@@ -45,14 +45,16 @@ function Player (name, image) {
         this.socket.on("login", function (data) {
             this.id = data;
 
-            this.socket.emit("playerData", { id: this.id, name: this.name, image: this.image });
+            this.socket.emit("playerData", { id: this.id, name: this.name, image: this.image, x: this.x, y: this.y });
         }.bind(this));
 
         this.socket.on("addPlayer", function (data) {
+            console.log(JSON.stringify(data));
             gameObjects.push(new NetworkedPlayer(data.id, data.name, data.x, data.y, data.image));
         });
 
         this.socket.on("movePlayer", function (data) {
+            console.log(JSON.stringify(data));
             gameObjects.forEach(function (element, index, array) {
                 if (element.id === data.id) { array[index].x = data.x; array[index].y = data.y; }
             });

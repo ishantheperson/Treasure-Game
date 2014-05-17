@@ -23,9 +23,15 @@ var players = [];
 io.sockets.on("connection", function (socket) {
     console.log("A socket connected!"); // yay!
 
+    socket.set("id", players.length);
+    socket.emit("login", players.length);
+
+    players.forEach(function (element, index, array) {
+        socket.emit("addPlayer", { id: element.id, name: element.name, x: element.x, y: element.y, image: element.image });
+    });
+
     players.push(new Player());
 
-    socket.emit("login", players.length - 1);
 
     socket.on("playerData", function (data) {
         players[data.id].name = data.name;
@@ -41,5 +47,7 @@ io.sockets.on("connection", function (socket) {
         socket.broadcast.emit("movePlayer", { id: data.id, x: data.x, y: data.y });
     });
 
-    console.log("Sent player ID");
+    socket.on("disconnect", function () {
+        players.splice(socket.get('id'), 1);
+    });
 });
