@@ -24,23 +24,43 @@ function keyUp(event) {
 //#endregion
 
 function Dragon() {
+    this.id = null;
+
     this.x = 50;
     this.y = 50;
 
     this.speed = 2;
 
-    this.socket = io.connect('ws://localhost:8080');
+    this.connected = null;
+    this.socket = io.connect("ws://localhost:8080");
+
+    this.socket.on("connect", function () {
+        this.connected = true;
+        this.socket.on("login", function (data) {
+            this.id = data;
+        });
+
+    }.bind(this));
 
     this.draw = function () {
-        if (keyboardState.leftDown) { x -= speed; }
-        if (keyboardState.rightDown) { x += speed; }
+        if (this.connected) {
+            if (keyboardState.leftDown) { this.x -= this.speed; }
+            if (keyboardState.rightDown) { this.x += this.speed; }
 
-        context.drawImage(images.dragon, x, y);
+            debugger;
+            this.socket.emit("position", { id: this.id, x: this.x, y: this.y });
+
+            context.drawImage(images.dragon, this.x, this.y);
+        }
     }
 }
 
 function draw() {
+    context.clearRect(0, 0, 250, 250); // canvas width, height
 
+    gameObjects.forEach(function (element, index, array) {
+        element.draw();
+    });
 }
 
 $(document).ready(function () {
