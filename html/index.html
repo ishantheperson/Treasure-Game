@@ -1,41 +1,46 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-    <head>        
-        <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 
-        <title>My Amazing Not-Game</title>
+    <title>My Amazing Not-Game</title>
 
-        <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="js/jquery.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/jquery.js"></script>
 
-        <script src="js/game.js"></script>
-    </head>
+    <script src="js/game.js"></script>
+</head>
 
-    <body>
-        <div class="content">        
-            <h1>My Amazing Notgame Game With Dragons</h1>
-            <p>It's the stupidest game ever.</p>
-            <form>
-                <label>Name: <input type="text" id="playerName"></label>
-                <label>Server Address: <input type="text" id="address" value="ws://50.156.12.144:9186"></label>
-                <button id="join">Join</button><span id="error"></span>
-            </form>
+<body>
+    <div class="content">
+        <h1>My Amazing Notgame Game With Dragons</h1>
+        <p>It's the stupidest game ever.</p>
+        <form>
+            <label>Name:
+                <input type="text" id="playerName"></label>
+            <label>Server Address:
+                <input type="text" id="address" value="ws://50.156.12.144:9186"></label>
+            <button id="join">Join</button><span id="error"></span>
+        </form>
 
-            <div id="canvasWrapper">
-                <canvas id="game"></canvas>
-            </div>
+        <canvas id="game"></canvas>
+        <div id="scoresBox">
+            <h3>Scores</h3>
+            <hr>
+            <ol id="scores"></ol>
         </div>
+    </div>
 
-        <div style="display: none">
-            <img src="img/dragon1.png" id="dragon1">
-            <img src="img/dragon2.png" id="dragon2">
-            <img src="img/dragon3.png" id="dragon3">
+    <div style="display: none">
+        <img src="img/dragon1.png" id="dragon1">
+        <img src="img/dragon2.png" id="dragon2">
+        <img src="img/dragon3.png" id="dragon3">
 
-            <img src="img/mountains.jpeg" id="mountains">
-            
-            <img src="img/treasure.png" id="treasure">
-        </div>
-    </body>
+        <img src="img/mountains.jpeg" id="mountains">
+
+        <img src="img/treasure.png" id="treasure">
+    </div>
+</body>
 </html>

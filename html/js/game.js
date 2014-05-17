@@ -5,12 +5,10 @@ var playerImages;
 var images;
 
 var treasure;
-var highScore = "";
-
 var players = [];
 
-var CANVAS_WIDTH = 1024;
-var CANVAS_HEIGHT = 724;
+var CANVAS_WIDTH = 512;
+var CANVAS_HEIGHT = 362;
 
 //#region Keyboard
 var keyboardState = {
@@ -89,9 +87,11 @@ function Player (name, image, address) {
             });
         });
 
-        this.socket.on("highScore", function (data) {
-            console.log("High score: " + JSON.stringify(data));
-            highScore = "Current Winner: " + data.name + " with " + data.score + " points";
+        this.socket.on("scores", function (data) {
+            $("#scores").html();
+            $.each(data, function (i, player) {
+                $("#scores").append("<li>" + player.name + ": " + player.score);
+            });
         });
 
         this.socket.on("newTreasure", function (data) {
@@ -116,9 +116,6 @@ function Player (name, image, address) {
             context.textAlign = "center";
             context.fillText(this.name, this.x + 32, this.y - 2);
             context.drawImage(playerImages["dragon" + image], this.x, this.y);
-
-            context.textAlign = "right";
-            context.fillText(highScore, CANVAS_WIDTH - 10, 10);
         }
     };
 }
@@ -152,6 +149,8 @@ $(document).ready(function () {
     canvas = $("#game")[0];
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
+
+    $("#scores").height(CANVAS_HEIGHT);
 
     context = canvas.getContext("2d");
 

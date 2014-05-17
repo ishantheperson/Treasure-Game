@@ -13,11 +13,19 @@
     color: red;
 }
 
-#canvasWrapper {
-    text-align: center;
+#scoresBox {
+    width: 300px;
+    background-color: #ffecd3;
+    display: inline-block;
+    padding: 10px;
 }
 
-canvas {
+#game {
     margin: 10px;
     border: 1px solid black;
+    display: inline-block;
+}
+
+#scores > li:first-child {
+    font-weight: bold;
 }

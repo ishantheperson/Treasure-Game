@@ -7,11 +7,13 @@ app.use(express.static(__dirname + "/html"));
 var server = require("http").createServer(app).listen(port);
 var io = require("socket.io").listen(server);
 
+var collisionMargin = 16;
+
 function Rect(x, y, width, height) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+    this.x = x + collisionMargin;
+    this.y = y + collisionMargin;
+    this.width = width - collisionMargin;
+    this.height = height - collisionMargin;
 
     this.intersects = function (other) {
         if (other.x < this.x + this.width &&
@@ -24,8 +26,8 @@ function Rect(x, y, width, height) {
 }
 
 function Treasure() {
-    this.x = getRandom(0, 1024);
-    this.y = getRandom(0, 724);
+    this.x = getRandom(0, 500);
+    this.y = getRandom(0, 320);
 
     this.getRect = function () {
         return new Rect(this.x, this.y, 64, 64);
@@ -54,15 +56,17 @@ function Player(id) {
     };
 }
 
-var players = {};
+function sortScores(a, b) {
+    if (a.score > b.score) { return -1; }
+    else if (a.score < b.score) { return 1; }
+    else { return 0; }
+}
 
-var highScore = new Player(-1);
+var players = {};
 
 io.set("log level", 2);
 io.sockets.on("connection", function (socket) {
     var id = Object.keys(players).length;
-
-    console.log("A socket connected w/ ID: %i", id); // yay!
 
     socket.emit("login", { id: id, x: currentTreasure.x, y: currentTreasure.y });
 
@@ -88,15 +92,17 @@ io.sockets.on("connection", function (socket) {
         if (players[data.id].getRect().intersects(currentTreasure.getRect())) {
             players[data.id].score += 1;
 
-            console.log("Player score: " + players[data.id].score + "\nHigh score: " + highScore.score);
-
             currentTreasure = new Treasure();
             io.sockets.emit("newTreasure", { x: currentTreasure.x, y: currentTreasure.y });
 
-            if (players[data.id].score > highScore.score) { highScore = players[data.id]; }
+            var scores = [];
+            for (var player in players) {
+                scores.push({ name: players[player].name, score: players[player].score });
+            }
 
-            io.sockets.emit("highScore", { name: highScore.name, score: highScore.score });
+            scores.sort(sortScores);
 
+            io.sockets.emit("scores", scores);
         }
     });
 
