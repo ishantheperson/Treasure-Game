@@ -6,15 +6,23 @@
         <title>My Amazing Game</title>
 
         <link rel="stylesheet" href="style.css">
+
         <script src="/socket.io/socket.io.js"></script>
+        <script src="js/jquery.js"></script>
+
+        <script src="js/game.js"></script>
     </head>
 
     <body>
         <div class="content">        
             <h1>My Amazing Game With Dragons</h1>
             <div id="canvasWrapper">
-                <canvas id="game"></canvas>
+                <canvas id="game" width="250" height="250"></canvas>
             </div>
+        </div>
+
+        <div style="display: none">
+            <img src="img/dragon.png" id="dragon">
         </div>
     </body>
 </html>
