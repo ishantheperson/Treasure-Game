@@ -30,11 +30,15 @@ io.sockets.on("connection", function (socket) {
     socket.on("playerData", function (data) {
         players[data.id].name = data.name;
         players[data.id].image = data.image;
+
+        socket.broadcast.emit("addPlayer", { id: data.id, name: data.name, x: data.x, y: data.y, image: data.image });
     });
 
     socket.on("position", function (data) {
         players[data.id].x = data.x;
         players[data.id].y = data.y;
+
+        socket.broadcast.emit("movePlayer", { id: data.id, x: data.x, y: data.y });
     });
 
     console.log("Sent player ID");

@@ -38,6 +38,7 @@ function Player (name, image) {
     this.connected = null;
     this.socket = io.connect("ws://localhost:8080");
 
+    //#region Socket
     this.socket.on("connect", function () {
         this.connected = true;
 
@@ -48,9 +49,16 @@ function Player (name, image) {
         }.bind(this));
 
         this.socket.on("addPlayer", function (data) {
-            gameObjects.push(new NetworkedPlayer(data.x, data.y, data.image));
+            gameObjects.push(new NetworkedPlayer(data.id, data.name, data.x, data.y, data.image));
+        });
+
+        this.socket.on("movePlayer", function (data) {
+            gameObjects.forEach(function (element, index, array) {
+                if (element.id === data.id) { array[index].x = data.x; array[index].y = data.y; }
+            });
         });
     }.bind(this));
+    //#endregion
 
     this.draw = function () {
         if (this.connected) {
@@ -60,7 +68,7 @@ function Player (name, image) {
 
             if (positionChanged) { this.socket.emit("position", { id: this.id, x: this.x, y: this.y }); }
 
-            context.drawImage(images[image], this.x, this.y);
+            context.drawImage(images["dragon" + image], this.x, this.y);
         }
     }
 }
@@ -74,7 +82,7 @@ function NetworkedPlayer(id, name, x, y, image) {
     this.image = image;
 
     this.draw = function() {
-        context.drawImage(images[image], this.x, this.y);
+        context.drawImage(images["dragon" + image], this.x, this.y);
     }
 }
 
