@@ -37,18 +37,19 @@ function Dragon() {
     this.socket.on("connect", function () {
         this.connected = true;
         this.socket.on("login", function (data) {
+            debugger;
             this.id = data;
-        });
+        }.bind(this));
 
     }.bind(this));
 
     this.draw = function () {
         if (this.connected) {
-            if (keyboardState.leftDown) { this.x -= this.speed; }
-            if (keyboardState.rightDown) { this.x += this.speed; }
+            var positionChanged = false;
+            if (keyboardState.leftDown) { this.x -= this.speed; positionChanged = true; }
+            if (keyboardState.rightDown) { this.x += this.speed; positionChanged = true; }
 
-            debugger;
-            this.socket.emit("position", { id: this.id, x: this.x, y: this.y });
+            if (positionChanged) this.socket.emit("position", { id: this.id, x: this.x, y: this.y });
 
             context.drawImage(images.dragon, this.x, this.y);
         }
