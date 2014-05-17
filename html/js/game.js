@@ -55,12 +55,10 @@ function Player (name, image, address) {
         }.bind(this));
 
         this.socket.on("addPlayer", function (data) {
-            console.log(JSON.stringify(data));
             gameObjects.push(new NetworkedPlayer(data.id, data.name, data.x, data.y, data.image));
         });
 
         this.socket.on("movePlayer", function (data) {
-            console.log(JSON.stringify(data));
             gameObjects.forEach(function (element, index, array) {
                 if (element.id === data.id) { array[index].x = data.x; array[index].y = data.y; }
             });
@@ -85,6 +83,7 @@ function Player (name, image, address) {
 
             if (positionChanged) { this.socket.emit("position", { id: this.id, x: this.x, y: this.y }); }
 
+            context.fillText(this.name, this.x, this.y);
             context.drawImage(images["dragon" + image], this.x, this.y);
         }
     };
@@ -99,6 +98,7 @@ function NetworkedPlayer(id, name, x, y, image) {
     this.image = image;
 
     this.draw = function () {
+        context.fillText(this.name, this.x, this.y);
         context.drawImage(images["dragon" + image], this.x, this.y);
     };
 }
@@ -114,6 +114,7 @@ function draw() {
 
 $(document).ready(function () {
     context = document.getElementById("game").getContext("2d");
+    context.font = "normal 12pt Courier";
 
     images = {
         dragon1: document.getElementById("dragon1"),
@@ -126,10 +127,13 @@ $(document).ready(function () {
 
     $("#join").click(function () {
         var name = $("#playerName").val();
-        if (name === "") { $("#error").text("You must enter a name for the player"); return; }
-        $("#join").prop("disabled", true);
+        if (name === "") { $("#error").text("You must enter a name for the player"); }
+        else {
+            $("#error").text("");
+            $("#join").prop("disabled", true);
 
-        gameObjects.push(new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val()));
-        setInterval(draw, 10);
+            gameObjects.push(new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val()));
+            setInterval(draw, 10);
+        }
     });
 });
