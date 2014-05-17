@@ -5,6 +5,8 @@ var playerImages;
 var images;
 
 var treasure;
+var highScore = "";
+
 var players = [];
 
 var CANVAS_WIDTH = 1024;
@@ -62,11 +64,10 @@ function Player (name, image, address) {
 
     //#region Socket
     this.socket.on("connect", function () {
-        this.connected = true;
-
         this.socket.on("login", function (data) {
             this.id = data.id;
             treasure = new Treasure(data.x, data.y);
+            this.connected = true;
 
             this.socket.emit("playerData", { id: this.id, name: this.name, image: this.image, x: this.x, y: this.y });
         }.bind(this));
@@ -88,8 +89,13 @@ function Player (name, image, address) {
             });
         });
 
+        this.socket.on("highScore", function (data) {
+            console.log("High score: " + JSON.stringify(data));
+            highScore = "Current Winner: " + data.name + " with " + data.score + " points";
+        });
+
         this.socket.on("newTreasure", function (data) {
-            
+            treasure = new Treasure(data.x, data.y);
         });
     }.bind(this));
     //#endregion
@@ -107,9 +113,12 @@ function Player (name, image, address) {
 
             if (positionChanged) { this.socket.emit("position", { id: this.id, x: this.x, y: this.y }); }
 
-            context.fillText(this.name, this.x + 32, this.y - 2);
             context.textAlign = "center";
+            context.fillText(this.name, this.x + 32, this.y - 2);
             context.drawImage(playerImages["dragon" + image], this.x, this.y);
+
+            context.textAlign = "right";
+            context.fillText(highScore, CANVAS_WIDTH - 10, 10);
         }
     };
 }
@@ -123,6 +132,7 @@ function NetworkedPlayer(id, name, x, y, image) {
     this.image = image;
 
     this.draw = function () {
+        context.textAlign = "center";
         context.fillText(this.name, this.x + 32, this.y - 2);
         context.drawImage(playerImages["dragon" + image], this.x, this.y);
     };

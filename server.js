@@ -56,6 +56,8 @@ function Player(id) {
 
 var players = {};
 
+var highScore = new Player(-1);
+
 io.set("log level", 2);
 io.sockets.on("connection", function (socket) {
     var id = Object.keys(players).length;
@@ -78,16 +80,24 @@ io.sockets.on("connection", function (socket) {
     });
 
     socket.on("position", function (data) {
-        try {
-            players[data.id].x = data.x;
-            players[data.id].y = data.y;
+        players[data.id].x = data.x;
+        players[data.id].y = data.y;
 
-            socket.broadcast.emit("movePlayer", { id: data.id, x: data.x, y: data.y });
+        socket.broadcast.emit("movePlayer", { id: data.id, x: data.x, y: data.y });
 
-            if (players[data.id].getRect().intersects(currentTreasure.getRect())) {
-                players[data.id].score += 1;
-            }
-        } catch (e){}
+        if (players[data.id].getRect().intersects(currentTreasure.getRect())) {
+            players[data.id].score += 1;
+
+            console.log("Player score: " + players[data.id].score + "\nHigh score: " + highScore.score);
+
+            currentTreasure = new Treasure();
+            io.sockets.emit("newTreasure", { x: currentTreasure.x, y: currentTreasure.y });
+
+            if (players[data.id].score > highScore.score) { highScore = players[data.id]; }
+
+            io.sockets.emit("highScore", { name: highScore.name, score: highScore.score });
+
+        }
     });
 
     socket.on("disconnect", function () {
