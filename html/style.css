@@ -9,6 +9,10 @@
     font-family: Arial, sans-serif;
 }
 
+#error {
+    color: red;
+}
+
 #canvasWrapper {
     text-align: center;
 }

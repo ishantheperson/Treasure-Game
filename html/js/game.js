@@ -1,5 +1,6 @@
 ﻿var context;
 var images;
+
 var gameObjects = [];
 
 //#region Keyboard
@@ -39,12 +40,16 @@ function Player (name, image) {
 
     this.socket.on("connect", function () {
         this.connected = true;
+
         this.socket.on("login", function (data) {
             this.id = data;
 
             this.socket.emit("playerData", { id: this.id, name: this.name, image: this.image });
         }.bind(this));
 
+        this.socket.on("addPlayer", function (data) {
+            gameObjects.push(new NetworkedPlayer(data.x, data.y, data.image));
+        });
     }.bind(this));
 
     this.draw = function () {
@@ -53,13 +58,26 @@ function Player (name, image) {
             if (keyboardState.leftDown) { this.x -= this.speed; positionChanged = true; }
             if (keyboardState.rightDown) { this.x += this.speed; positionChanged = true; }
 
-            if (positionChanged) this.socket.emit("position", { id: this.id, x: this.x, y: this.y });
+            if (positionChanged) { this.socket.emit("position", { id: this.id, x: this.x, y: this.y }); }
 
-            context.fillStyle = "rgba(200, 50, 50, 1)";
-            context.drawImage(image, this.x, this.y);
+            context.drawImage(images[image], this.x, this.y);
         }
     }
 }
+
+function NetworkedPlayer(id, name, x, y, image) {
+    this.id = id;
+    this.name = name;
+
+    this.x = x;
+    this.y = y;
+    this.image = image;
+
+    this.draw = function() {
+        context.drawImage(images[image], this.x, this.y);
+    }
+}
+
 
 function draw() {
     context.clearRect(0, 0, 250, 250);  
@@ -81,7 +99,12 @@ $(document).ready(function () {
     $(document).keydown(keyDown);
     $(document).keyup(keyUp);
 
-    gameObjects.push(new Player($("#playerName").val(), Math.floor(Math.random() * 4)));
+    $("#join").click(function () {
+        var name = $("#playerName").val();
+        if (name === "") { $("#error").text("You must enter a name for the player"); return; }
+        $("#join").prop("disabled", true);
 
-    setInterval(draw, 10);
+        gameObjects.push(new Player(name, Math.floor(Math.random() * 4)));
+        setInterval(draw, 10);
+    });
 });
