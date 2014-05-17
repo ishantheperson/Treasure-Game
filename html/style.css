@@ -1,0 +1,18 @@
+﻿.content {
+    width: 60%;
+    margin: 10px auto;
+
+    padding: 5px 20px;
+
+    border: 1px solid black;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+}
+
+#canvasWrapper {
+    text-align: center;
+}
+
+canvas {
+    border: 1px solid black;
+}
