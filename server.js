@@ -1,9 +1,14 @@
 var express = require("express");
 var app = express();
-var server = require("http").createServer(app);
-var io = require("socket.io").listen(server);
 
 var port = 8080;
 
 app.use(express.static(__dirname + "/html"));
-app.listen(port);
+
+var server = require("http").createServer(app).listen(port);
+
+var io = require("socket.io").listen(server);
+
+io.sockets.on("connection", function (socket) {
+    console.log("A socket connected!");
+});
