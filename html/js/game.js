@@ -23,11 +23,14 @@ function keyUp(event) {
 }
 //#endregion
 
-function Dragon() {
+function Player (name, image) {
     this.id = null;
 
     this.x = 50;
     this.y = 50;
+
+    this.name = name;
+    this.image = image;
 
     this.speed = 2;
 
@@ -37,8 +40,9 @@ function Dragon() {
     this.socket.on("connect", function () {
         this.connected = true;
         this.socket.on("login", function (data) {
-            debugger;
             this.id = data;
+
+            this.socket.emit("playerData", { id: this.id, name: this.name, image: this.image });
         }.bind(this));
 
     }.bind(this));
@@ -51,13 +55,14 @@ function Dragon() {
 
             if (positionChanged) this.socket.emit("position", { id: this.id, x: this.x, y: this.y });
 
-            context.drawImage(images.dragon, this.x, this.y);
+            context.fillStyle = "rgba(200, 50, 50, 1)";
+            context.drawImage(image, this.x, this.y);
         }
     }
 }
 
 function draw() {
-    context.clearRect(0, 0, 250, 250); // canvas width, height
+    context.clearRect(0, 0, 250, 250);  
 
     gameObjects.forEach(function (element, index, array) {
         element.draw();
@@ -68,13 +73,15 @@ $(document).ready(function () {
     context = document.getElementById("game").getContext("2d");
 
     images = {
-        dragon: document.getElementById("dragon")
+        dragon1: document.getElementById("dragon1"),
+        dragon2: document.getElementById("dragon2"),
+        dragon3: document.getElementById("dragon3")
     };
 
     $(document).keydown(keyDown);
     $(document).keyup(keyUp);
 
-    gameObjects.push(new Dragon());
+    gameObjects.push(new Player($("#playerName").val(), Math.floor(Math.random() * 4)));
 
     setInterval(draw, 10);
 });

@@ -13,6 +13,9 @@ var io = require("socket.io").listen(server);
 function Player() {
     this.x = 0;
     this.y = 0;
+
+    this.name = "";
+    this.image = 0;
 }
 
 var players = [];
@@ -24,9 +27,12 @@ io.sockets.on("connection", function (socket) {
 
     socket.emit("login", players.length - 1);
 
-    socket.on("position", function (data) {
-        console.log(JSON.stringify(data));
+    socket.on("playerData", function (data) {
+        players[data.id].name = data.name;
+        players[data.id].image = data.image;
+    });
 
+    socket.on("position", function (data) {
         players[data.id].x = data.x;
         players[data.id].y = data.y;
     });
