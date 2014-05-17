@@ -4,7 +4,8 @@ var context;
 var playerImages;
 var images;
 
-var gameObjects = [];
+var treasure;
+var players = [];
 
 var CANVAS_WIDTH = 1024;
 var CANVAS_HEIGHT = 724;
@@ -36,6 +37,15 @@ function keyUp(event) {
 }
 //#endregion
 
+function Treasure(x, y) {
+    this.x = x;
+    this.y = y;
+
+    this.draw = function () {
+        context.drawImage(images.treasure, this.x, this.y);
+    }
+}
+
 function Player (name, image, address) {
     this.id = null;
 
@@ -55,32 +65,39 @@ function Player (name, image, address) {
         this.connected = true;
 
         this.socket.on("login", function (data) {
-            this.id = data;
+            this.id = data.id;
+            treasure = new Treasure(data.x, data.y);
 
             this.socket.emit("playerData", { id: this.id, name: this.name, image: this.image, x: this.x, y: this.y });
         }.bind(this));
 
         this.socket.on("addPlayer", function (data) {
             console.log("Adding Player Data: " + JSON.stringify(data));
-            gameObjects.push(new NetworkedPlayer(data.id, data.name, data.x, data.y, data.image));
+            players.push(new NetworkedPlayer(data.id, data.name, data.x, data.y, data.image));
         });
 
         this.socket.on("movePlayer", function (data) {
-            gameObjects.forEach(function (element, index, array) {
+            players.forEach(function (element, index, array) {
                 if (element.id === data.id) { array[index].x = data.x; array[index].y = data.y; }
             });
         });
 
         this.socket.on("removePlayer", function (data) {
-            gameObjects.forEach(function (element, index, array) {
+            players.forEach(function (element, index, array) {
                 if (element.id === data.id) { array.splice(index, 1); }
             });
+        });
+
+        this.socket.on("newTreasure", function (data) {
+            
         });
     }.bind(this));
     //#endregion
 
     this.draw = function () {
         if (this.connected) {
+            treasure.draw();
+
             var positionChanged = false;
             if (keyboardState.left) { this.x -= this.speed; positionChanged = true; }
             if (keyboardState.right) { this.x += this.speed; positionChanged = true; }
@@ -111,13 +128,12 @@ function NetworkedPlayer(id, name, x, y, image) {
     };
 }
 
-
 function draw() {
     context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);  
 
     context.drawImage(images.mountains, 0, 0);
 
-    gameObjects.forEach(function (element, index, array) {
+    players.forEach(function (element, index, array) {
         element.draw();
     });
 }
@@ -142,7 +158,8 @@ $(document).ready(function () {
     };
 
     images = {
-        mountains: document.getElementById("mountains")
+        mountains: document.getElementById("mountains"),
+        treasure: document.getElementById("treasure")
     };
 
     $(document).keydown(keyDown);
@@ -155,7 +172,7 @@ $(document).ready(function () {
             $("#error").text("");
             $("#join").prop("disabled", true);
 
-            gameObjects.push(new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val()));
+            players.push(new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val()));
             setInterval(draw, 10);
         }
     });
