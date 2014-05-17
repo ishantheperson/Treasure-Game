@@ -55,6 +55,7 @@ function Player (name, image, address) {
         }.bind(this));
 
         this.socket.on("addPlayer", function (data) {
+            console.log("Adding Player Data: " + JSON.stringify(data));
             gameObjects.push(new NetworkedPlayer(data.id, data.name, data.x, data.y, data.image));
         });
 

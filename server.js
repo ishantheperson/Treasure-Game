@@ -1,4 +1,4 @@
-var port = 8080;
+var port = 9186;
 
 var express = require("express");
 var app = express();
@@ -17,22 +17,20 @@ function Player(id) {
     this.image = 0;
 }
 
-var players = [];
+var players = {}
 
 io.sockets.on("connection", function (socket) {
-    console.log("A socket connected!"); // yay!
+    var id = Object.keys(players).length;
 
-    var id = players.length;
+    console.log("A socket connected w/ ID: %i", id); // yay!
 
     socket.emit("login", id);
 
-    players.forEach(function (element, index, array) {
-        var data = { id: element.id, name: element.name, x: element.x, y: element.y, image: element.image };
-        console.log(JSON.stringify(data));
-        socket.emit("addPlayer", data);
-    });
+    for (player in players) {
+        socket.emit("addPlayer", { id: players[player].id, name: players[player].name, x: players[player].x, y: players[player].y, image: players[player].image });
+    }
 
-    players.push(new Player(id));
+    players[id] = new Player(id);
 
     socket.on("playerData", function (data) {
         players[data.id].name = data.name;
@@ -49,7 +47,7 @@ io.sockets.on("connection", function (socket) {
     });
 
     socket.on("disconnect", function () {
-        players.splice(id, 1);
+        delete players[id];
         socket.broadcast.emit("removePlayer", { id: id });
     });
 });
