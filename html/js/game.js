@@ -88,7 +88,7 @@ function Player (name, image, address) {
         });
 
         this.socket.on("scores", function (data) {
-            $("#scores").html();
+            $("#scores").html("");
             $.each(data, function (i, player) {
                 $("#scores").append("<li>" + player.name + ": " + player.score);
             });
@@ -150,7 +150,7 @@ $(document).ready(function () {
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
 
-    $("#scores").height(CANVAS_HEIGHT);
+    $("#scoresBox").height(CANVAS_HEIGHT);
 
     context = canvas.getContext("2d");
 
