@@ -1,7 +1,13 @@
-﻿var context;
+﻿var canvas;
+var context;
+
+var playerImages;
 var images;
 
 var gameObjects = [];
+
+var CANVAS_WIDTH = 1024;
+var CANVAS_HEIGHT = 724;
 
 //#region Keyboard
 var keyboardState = {
@@ -85,7 +91,7 @@ function Player (name, image, address) {
             if (positionChanged) { this.socket.emit("position", { id: this.id, x: this.x, y: this.y }); }
 
             context.fillText(this.name, this.x, this.y);
-            context.drawImage(images["dragon" + image], this.x, this.y);
+            context.drawImage(playerImages["dragon" + image], this.x, this.y);
         }
     };
 }
@@ -100,13 +106,15 @@ function NetworkedPlayer(id, name, x, y, image) {
 
     this.draw = function () {
         context.fillText(this.name, this.x, this.y);
-        context.drawImage(images["dragon" + image], this.x, this.y);
+        context.drawImage(playerImages["dragon" + image], this.x, this.y);
     };
 }
 
 
 function draw() {
-    context.clearRect(0, 0, 250, 250);  
+    context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);  
+
+    context.drawImage(images.mountains, 0, 0);
 
     gameObjects.forEach(function (element, index, array) {
         element.draw();
@@ -114,13 +122,23 @@ function draw() {
 }
 
 $(document).ready(function () {
-    context = document.getElementById("game").getContext("2d");
-    context.font = "normal 12pt Courier";
+    canvas = $("#game")[0];
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
 
-    images = {
+    context = canvas.getContext("2d");
+    context.font = "normal 12pt Courier";
+    context.fillText("Click 'Join' to start the game.", 400, 300);
+
+
+    playerImages = {
         dragon1: document.getElementById("dragon1"),
         dragon2: document.getElementById("dragon2"),
         dragon3: document.getElementById("dragon3")
+    };
+
+    images = {
+        mountains: document.getElementById("mountains")
     };
 
     $(document).keydown(keyDown);

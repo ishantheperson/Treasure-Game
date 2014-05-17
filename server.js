@@ -17,7 +17,7 @@ function Player(id) {
     this.image = 0;
 }
 
-var players = {}
+var players = {};
 
 io.sockets.on("connection", function (socket) {
     var id = Object.keys(players).length;
@@ -26,7 +26,7 @@ io.sockets.on("connection", function (socket) {
 
     socket.emit("login", id);
 
-    for (player in players) {
+    for (var player in players) {
         socket.emit("addPlayer", { id: players[player].id, name: players[player].name, x: players[player].x, y: players[player].y, image: players[player].image });
     }
 
@@ -40,10 +40,12 @@ io.sockets.on("connection", function (socket) {
     });
 
     socket.on("position", function (data) {
-        players[data.id].x = data.x;
-        players[data.id].y = data.y;
+        try {
+            players[data.id].x = data.x;
+            players[data.id].y = data.y;
 
-        socket.broadcast.emit("movePlayer", { id: data.id, x: data.x, y: data.y });
+            socket.broadcast.emit("movePlayer", { id: data.id, x: data.x, y: data.y });
+        } catch (e){}
     });
 
     socket.on("disconnect", function () {
