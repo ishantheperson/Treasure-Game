@@ -90,7 +90,8 @@ function Player (name, image, address) {
 
             if (positionChanged) { this.socket.emit("position", { id: this.id, x: this.x, y: this.y }); }
 
-            context.fillText(this.name, this.x, this.y);
+            context.fillText(this.name, this.x + 32, this.y - 2);
+            context.textAlign = "center";
             context.drawImage(playerImages["dragon" + image], this.x, this.y);
         }
     };
@@ -105,7 +106,7 @@ function NetworkedPlayer(id, name, x, y, image) {
     this.image = image;
 
     this.draw = function () {
-        context.fillText(this.name, this.x, this.y);
+        context.fillText(this.name, this.x + 32, this.y - 2);
         context.drawImage(playerImages["dragon" + image], this.x, this.y);
     };
 }
@@ -127,9 +128,12 @@ $(document).ready(function () {
     canvas.height = CANVAS_HEIGHT;
 
     context = canvas.getContext("2d");
-    context.font = "normal 12pt Courier";
-    context.fillText("Click 'Join' to start the game.", 400, 300);
 
+    context.textAlign = "center";
+    context.font = "normal 24pt serif";
+    context.fillText("Click 'Join' to start the game.", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+    
+    context.font = "normal 12pt monospace";
 
     playerImages = {
         dragon1: document.getElementById("dragon1"),
