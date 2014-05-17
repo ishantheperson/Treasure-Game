@@ -59,6 +59,12 @@ function Player (name, image) {
                 if (element.id === data.id) { array[index].x = data.x; array[index].y = data.y; }
             });
         });
+
+        this.socket.on("removePlayer", function (data) {
+            gameObjects.forEach(function (element, index, array) {
+                if (element.id === data.id) { array.splice(index, 1); }
+            });
+        });
     }.bind(this));
     //#endregion
 
@@ -114,7 +120,7 @@ $(document).ready(function () {
         if (name === "") { $("#error").text("You must enter a name for the player"); return; }
         $("#join").prop("disabled", true);
 
-        gameObjects.push(new Player(name, Math.floor(Math.random() * 4)));
+        gameObjects.push(new Player(name, Math.floor(Math.random() * 3) + 1));
         setInterval(draw, 10);
     });
 });

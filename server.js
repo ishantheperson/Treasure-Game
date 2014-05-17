@@ -10,7 +10,9 @@ var server = require("http").createServer(app).listen(port);
 var io = require("socket.io").listen(server);
 
 
-function Player() {
+function Player(id) {
+    this.id = id;
+
     this.x = 0;
     this.y = 0;
 
@@ -23,15 +25,17 @@ var players = [];
 io.sockets.on("connection", function (socket) {
     console.log("A socket connected!"); // yay!
 
-    socket.set("id", players.length);
-    socket.emit("login", players.length);
+    var id = players.length;
+
+    socket.emit("login", id);
 
     players.forEach(function (element, index, array) {
-        socket.emit("addPlayer", { id: element.id, name: element.name, x: element.x, y: element.y, image: element.image });
+        var data = { id: element.id, name: element.name, x: element.x, y: element.y, image: element.image };
+        console.log(JSON.stringify(data));
+        socket.emit("addPlayer", data);
     });
 
-    players.push(new Player());
-
+    players.push(new Player(id));
 
     socket.on("playerData", function (data) {
         players[data.id].name = data.name;
@@ -48,6 +52,7 @@ io.sockets.on("connection", function (socket) {
     });
 
     socket.on("disconnect", function () {
-        players.splice(socket.get('id'), 1);
+        players.splice(id, 1);
+        sockets.broadcast.emit("removePlayer", { id: id });
     });
 });
