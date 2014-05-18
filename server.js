@@ -16,12 +16,10 @@ function Rect(x, y, width, height) {
     this.height = height - collisionMargin * 2;
 
     this.intersects = function (other) {
-        if (other.x < this.x + this.width &&
-            this.x < other.x + other.width &&
-            other.y < this.y < this.y + this.height) {
-            return this.y < other.y + other.height;
-        }
-        else { return false; }
+        return !(this.x > other.x + other.width ||
+            this.x + this.width < other.x ||
+            this.y > other.y + other.height ||
+            this.y + this.height < other.y);
     };
 }
 
@@ -62,6 +60,16 @@ function sortScores(a, b) {
     else { return 0; }
 }
 
+function getScores() {
+    var scores = [];
+    for (var player in players) {
+        scores.push({ name: players[player].name, score: players[player].score });
+    }
+
+    scores.sort(sortScores);
+    return scores;
+}
+
 var players = {};
 
 io.set("log level", 2);
@@ -69,6 +77,7 @@ io.sockets.on("connection", function (socket) {
     var id = Object.keys(players).length;
 
     socket.emit("login", { id: id, x: currentTreasure.x, y: currentTreasure.y });
+    socket.emit("scores", getScores());
 
     for (var player in players) {
         socket.emit("addPlayer", { id: players[player].id, name: players[player].name, x: players[player].x, y: players[player].y, image: players[player].image });
@@ -81,6 +90,7 @@ io.sockets.on("connection", function (socket) {
         players[data.id].image = data.image;
 
         socket.broadcast.emit("addPlayer", { id: data.id, name: data.name, x: data.x, y: data.y, image: data.image });
+        io.sockets.emit("scores", getScores());
     });
 
     socket.on("position", function (data) {
@@ -95,19 +105,13 @@ io.sockets.on("connection", function (socket) {
             currentTreasure = new Treasure();
             io.sockets.emit("newTreasure", { x: currentTreasure.x, y: currentTreasure.y });
 
-            var scores = [];
-            for (var player in players) {
-                scores.push({ name: players[player].name, score: players[player].score });
-            }
-
-            scores.sort(sortScores);
-
-            io.sockets.emit("scores", scores);
+            io.sockets.emit("scores", getScores());
         }
     });
 
     socket.on("disconnect", function () {
         delete players[id];
         socket.broadcast.emit("removePlayer", { id: id });
+        socket.broadcast.emit("scores", getScores());
     });
 });

@@ -43,7 +43,7 @@ function Treasure(x, y) {
 
     this.draw = function () {
         context.drawImage(images.treasure, this.x, this.y);
-    }
+    };
 }
 
 function Player (name, image, address) {

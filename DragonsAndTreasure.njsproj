@@ -36,6 +36,9 @@
     <Content Include="html\img\mountains.jpeg">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="html\img\treasure.png">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="html\index.html">
       <SubType>Content</SubType>
     </Content>
