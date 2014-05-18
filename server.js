@@ -7,13 +7,13 @@ app.use(express.static(__dirname + "/html"));
 var server = require("http").createServer(app).listen(port);
 var io = require("socket.io").listen(server);
 
-var collisionMargin = 16;
+var collisionMargin = 12;
 
 function Rect(x, y, width, height) {
     this.x = x + collisionMargin;
     this.y = y + collisionMargin;
-    this.width = width - collisionMargin;
-    this.height = height - collisionMargin;
+    this.width = width - collisionMargin * 2;
+    this.height = height - collisionMargin * 2;
 
     this.intersects = function (other) {
         if (other.x < this.x + this.width &&
