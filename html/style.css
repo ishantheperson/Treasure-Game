@@ -13,30 +13,11 @@
     color: red;
 }
 
-.box {
+#scoresBox {
+    width: 300px;
+    background-color: #ffecd3;
     display: inline-block;
     padding: 10px;
-    float: right;
-    width: 250px;
-}
-
-#scoresBox {
-    background-color: #ffecd3;
-}
-
-#chatBox {
-    background-color: #48b6ff;
-}
-
-#messageArea {
-    background-color: white;
-    margin: 5px 0;
-    height: 250px;
-    overflow: auto;
-}
-
-#chatBox > input[type="text"], #chatBox > button {
-    padding: 5px;
     float: right;
 }
 

@@ -1,4 +1,7 @@
-﻿var playerImages;
+﻿var canvas;
+var context;
+
+var playerImages;
 var images;
 
 var treasure;
@@ -7,6 +10,7 @@ var players = [];
 var CANVAS_WIDTH = 512;
 var CANVAS_HEIGHT = 362;
 
+//#region Keyboard
 var keyboardState = {
     left: false,
     right: false,
@@ -31,6 +35,7 @@ function keyUp(event) {
         case 40: keyboardState.down = false; break;
     }
 }
+//#endregion
 
 function Treasure(x, y) {
     this.x = x;
@@ -53,8 +58,9 @@ function Player (name, image, address) {
     this.speed = 2;
 
     this.connected = null;
-    this.socket = io.connect(address + "/game");
+    this.socket = io.connect(address);
 
+    //#region Socket
     this.socket.on("connect", function () {
         this.socket.on("login", function (data) {
             this.id = data.id;
@@ -92,6 +98,7 @@ function Player (name, image, address) {
             treasure = new Treasure(data.x, data.y);
         });
     }.bind(this));
+    //#endregion
 
     this.draw = function () {
         if (this.connected) {
@@ -127,9 +134,6 @@ function NetworkedPlayer(id, name, x, y, image) {
         context.drawImage(playerImages["dragon" + image], this.x, this.y);
     };
 }
-
-var canvas;
-var context;
 
 function draw() {
     context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);  
@@ -175,8 +179,9 @@ $(document).ready(function () {
         if (name === "") { $("#error").text("You must enter a name for the player"); }
         else {
             $("#error").text("");
-            $("form input, form button").prop("disabled", true);
-            startChat();
+
+            $("#join").prop("disabled", true);
+
             players.push(new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val()));
             setInterval(draw, 10);
         }

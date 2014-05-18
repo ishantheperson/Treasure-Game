@@ -73,8 +73,7 @@ function getScores() {
 var players = {};
 
 io.set("log level", 2);
-
-io.of("/game").on("connection", function (socket) {
+io.sockets.on("connection", function (socket) {
     var id = Object.keys(players).length;
 
     socket.emit("login", { id: id, x: currentTreasure.x, y: currentTreasure.y });
@@ -104,8 +103,8 @@ io.of("/game").on("connection", function (socket) {
             players[data.id].score += 1;
 
             currentTreasure = new Treasure();
-
             io.sockets.emit("newTreasure", { x: currentTreasure.x, y: currentTreasure.y });
+
             io.sockets.emit("scores", getScores());
         }
     });
