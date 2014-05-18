@@ -76,7 +76,6 @@ io.set("log level", 2);
 
 io.of("/game").on("connection", function (socket) {
     var id = Object.keys(players).length;
-    console.log("Player " + id + " connected to Game");
 
     socket.emit("login", { id: id, x: currentTreasure.x, y: currentTreasure.y });
     socket.emit("scores", getScores());
@@ -119,8 +118,7 @@ io.of("/game").on("connection", function (socket) {
 });
 
 io.of("/chat").on("connection", function (socket) {
-    console.log("Someone connected to chat");
     socket.on("message", function (data) {
-        socket.broadcast.emit("addMessage", data)
+        socket.broadcast.emit("addMessage", data);
     });
 });

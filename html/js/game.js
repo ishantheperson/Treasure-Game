@@ -176,7 +176,7 @@ $(document).ready(function () {
         else {
             $("#error").text("");
             $("form input, form button").prop("disabled", true);
-
+            startChat();
             players.push(new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val()));
             setInterval(draw, 10);
         }
