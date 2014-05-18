@@ -73,8 +73,10 @@ function getScores() {
 var players = {};
 
 io.set("log level", 2);
-io.sockets.on("connection", function (socket) {
+
+io.of("/game").on("connection", function (socket) {
     var id = Object.keys(players).length;
+    console.log("Player " + id + " connected to Game");
 
     socket.emit("login", { id: id, x: currentTreasure.x, y: currentTreasure.y });
     socket.emit("scores", getScores());
@@ -103,8 +105,8 @@ io.sockets.on("connection", function (socket) {
             players[data.id].score += 1;
 
             currentTreasure = new Treasure();
-            io.sockets.emit("newTreasure", { x: currentTreasure.x, y: currentTreasure.y });
 
+            io.sockets.emit("newTreasure", { x: currentTreasure.x, y: currentTreasure.y });
             io.sockets.emit("scores", getScores());
         }
     });
@@ -113,5 +115,12 @@ io.sockets.on("connection", function (socket) {
         delete players[id];
         socket.broadcast.emit("removePlayer", { id: id });
         socket.broadcast.emit("scores", getScores());
+    });
+});
+
+io.of("/chat").on("connection", function (socket) {
+    console.log("Someone connected to chat");
+    socket.on("message", function (data) {
+        socket.broadcast.emit("addMessage", data)
     });
 });

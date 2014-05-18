@@ -11,6 +11,7 @@
     <script src="js/jquery.js"></script>
 
     <script src="js/game.js"></script>
+    <script src="js/chat.js"></script>
 </head>
 
 <body>
@@ -26,10 +27,17 @@
         </form>
 
         <canvas id="game"></canvas>
-        <div id="scoresBox">
+        
+        <div id="scoresBox" class="box">
             <h3>Scores</h3>
             <hr>
             <ol id="scores"></ol>
+        </div>
+
+        <div id="chatBox" class="box">
+            <div id="messageArea">Click join to enable chat</div>
+            <button id="submitChat" disabled>Submit</button>
+            <input type="text" id="chatInput" placeholder="Type a message..." disabled>
         </div>
     </div>
 
