@@ -42,6 +42,9 @@
     <Content Include="html\index.html">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="html\js\chat.js">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="html\js\game.js">
       <SubType>Content</SubType>
     </Content>

@@ -15,8 +15,11 @@
 
 <body>
     <div class="content">
-        <h1>My Amazing Notgame Game With Blobs</h1>
-        <p>It's the stupidest game ever. Use the arrow keys to move the blob to get the things.</p>
+        <header>
+            <h1>My Amazing Notgame Game With Blobs</h1>
+            <p>It's the stupidest game ever. Use the arrow keys to move the blob to get the things.</p>
+        </header>
+
         <form>
             <label>Name:
                 <input type="text" id="playerName"></label>
@@ -26,11 +29,19 @@
         </form>
 
         <canvas id="game"></canvas>
-        <div id="scoresBox">
+
+        <section id="scoresBox">
             <h3>Scores</h3>
             <hr>
             <ol id="scores"></ol>
-        </div>
+        </section>
+
+        <footer>
+            <h5>Credits</h5>
+            <hr>
+            <p>Thanks to <a target="_blank" href="http://abc-human.deviantart.com/art/A-landscape-try-394091673">Alice</a> for making the background which I stole</p>
+            <p>Thanks to <a target="_blank" href="http://socket.io">Socket.io</a> and <a target="_blank" href="http://nodejs.org">Node.js</a> for exciting new buzzword technologies</p>
+        </footer>
     </div>
 
     <div style="display: none">
