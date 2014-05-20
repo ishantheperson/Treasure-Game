@@ -25,8 +25,10 @@
                 <input type="text" id="playerName"></label>
             <label>Server Address:
                 <input type="text" id="address" value="ws://50.156.12.144:9186"></label>
-            <button id="join">Join</button><span id="error"></span>
+            <button id="join" type="submit">Join</button><span id="error"></span>
+            <button id="addBot" type="button" disabled>Add a bot</button>
         </form>
+
 
         <canvas id="game"></canvas>
 
@@ -35,6 +37,8 @@
             <hr>
             <ol id="scores"></ol>
         </section>
+
+        <section id="serverMessage"></section>
 
         <footer>
             <h5>Credits</h5>

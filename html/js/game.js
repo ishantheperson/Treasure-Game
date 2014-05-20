@@ -5,7 +5,7 @@ var playerImages;
 var images;
 
 var treasure;
-var players = [];
+var players = {};
 
 var CANVAS_WIDTH = 512;
 var CANVAS_HEIGHT = 362;
@@ -60,7 +60,6 @@ function Player (name, image, address) {
     this.connected = null;
     this.socket = io.connect(address);
 
-    //#region Socket
     this.socket.on("connect", function () {
         this.socket.on("login", function (data) {
             this.id = data.id;
@@ -72,19 +71,20 @@ function Player (name, image, address) {
 
         this.socket.on("addPlayer", function (data) {
             console.log("Adding Player Data: " + JSON.stringify(data));
-            players.push(new NetworkedPlayer(data.id, data.name, data.x, data.y, data.image));
+            players[data.id] = new NetworkedPlayer(data.name, data.x, data.y, data.image);
         });
 
         this.socket.on("movePlayer", function (data) {
-            players.forEach(function (element, index, array) {
-                if (element.id === data.id) { array[index].x = data.x; array[index].y = data.y; }
-            });
+            players[data.id].x = data.x;
+            players[data.id].y = data.y;
         });
 
         this.socket.on("removePlayer", function (data) {
-            players.forEach(function (element, index, array) {
-                if (element.id === data.id) { array.splice(index, 1); }
-            });
+            delete players[data.id];
+        });
+
+        this.socket.on("message", function (data) {
+            $("#serverMessage").html(data);
         });
 
         this.socket.on("scores", function (data) {
@@ -98,7 +98,6 @@ function Player (name, image, address) {
             treasure = new Treasure(data.x, data.y);
         });
     }.bind(this));
-    //#endregion
 
     this.draw = function () {
         if (this.connected) {
@@ -111,6 +110,12 @@ function Player (name, image, address) {
             if (keyboardState.up) { this.y -= this.speed; positionChanged = true; }
             if (keyboardState.down) { this.y += this.speed; positionChanged = true; }
 
+            if (this.x > CANVAS_WIDTH) { this.x = -70; }
+            else if (this.x < -70) { this.x = CANVAS_WIDTH; }
+
+            if (this.y > CANVAS_HEIGHT) { this.y = -70; }
+            else if (this.y < -70) { this.y = CANVAS_HEIGHT; }
+
             if (positionChanged) { this.socket.emit("position", { id: this.id, x: this.x, y: this.y }); }
 
             context.textAlign = "center";
@@ -120,8 +125,7 @@ function Player (name, image, address) {
     };
 }
 
-function NetworkedPlayer(id, name, x, y, image) {
-    this.id = id;
+function NetworkedPlayer(name, x, y, image) {
     this.name = name;
 
     this.x = x;
@@ -140,9 +144,9 @@ function draw() {
 
     context.drawImage(images.mountains, 0, 0);
 
-    players.forEach(function (element, index, array) {
-        element.draw();
-    });
+    for (var player in players) {
+        players[player].draw();
+    }
 }
 
 $(document).ready(function () {
@@ -180,10 +184,15 @@ $(document).ready(function () {
         else {
             $("#error").text("");
 
-            $("#join").prop("disabled", true);
+            $("#join, #playerName, #address").prop("disabled", true);
+            $("#addBot").prop("disabled", false);
 
-            players.push(new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val()));
+            players.player = new Player(name, Math.floor(Math.random() * 3) + 1, $("#address").val());
             setInterval(draw, 10);
         }
+    });
+
+    $("#addBot").click(function () {
+            players.player.socket.emit("addBot");
     });
 });

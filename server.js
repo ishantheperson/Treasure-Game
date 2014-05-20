@@ -54,6 +54,38 @@ function Player(id) {
     };
 }
 
+var botSpeed = 1.5;
+
+function Bot(id) {
+    this.id = id;
+
+    this.name = "Bot #" + (parseInt(id.substr(3), 10) + 1);
+    this.score = 0;
+
+    this.x = getRandom(0, 500);
+    this.y = getRandom(0, 320);
+
+    this.image = getRandom(1, 3);
+
+    setInterval(function () {
+        var vector = {
+            x: currentTreasure.x - this.x,
+            y: currentTreasure.y - this.y
+        };
+        var length = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+        this.x += vector.x / length * botSpeed;
+        this.y += vector.y / length * botSpeed;
+
+        if (this.getRect().intersects(currentTreasure.getRect())) { this.score++; broadcastScores(); }
+
+        io.sockets.emit("movePlayer", { id: this.id, x: this.x, y: this.y });
+    }.bind(this), 10);
+
+    this.getRect = function () {
+        return new Rect(this.x, this.y, 64, 64);
+    };
+}
+
 function sortScores(a, b) {
     if (a.score > b.score) { return -1; }
     else if (a.score < b.score) { return 1; }
@@ -70,7 +102,17 @@ function getScores() {
     return scores;
 }
 
+function broadcastScores() {
+    currentTreasure = new Treasure();
+
+    io.sockets.emit("newTreasure", { x: currentTreasure.x, y: currentTreasure.y });
+    io.sockets.emit("scores", getScores());
+}
+
 var players = {};
+
+var maxBotCount = 5;
+var botCount = 0;
 
 io.set("log level", 2);
 io.sockets.on("connection", function (socket) {
@@ -86,11 +128,24 @@ io.sockets.on("connection", function (socket) {
     players[id] = new Player(id);
 
     socket.on("playerData", function (data) {
+        console.log("Player connected: " + JSON.stringify(data));
+
         players[data.id].name = data.name;
         players[data.id].image = data.image;
 
         socket.broadcast.emit("addPlayer", { id: data.id, name: data.name, x: data.x, y: data.y, image: data.image });
         io.sockets.emit("scores", getScores());
+    });
+
+    socket.on("addBot", function (data) {
+        if (botCount === maxBotCount) {
+            socket.emit("message", "There are already too many bots, please don't add more.");
+        }
+        else {
+            var botName = "Bot" + botCount++;
+            players[botName] = new Bot(botName);
+            io.sockets.emit("addPlayer", { id: players[botName].id, name: players[botName].id, x: players[botName].x, y: players[botName].y, image: players[botName].image });
+        }
     });
 
     socket.on("position", function (data) {
@@ -101,11 +156,7 @@ io.sockets.on("connection", function (socket) {
 
         if (players[data.id].getRect().intersects(currentTreasure.getRect())) {
             players[data.id].score += 1;
-
-            currentTreasure = new Treasure();
-            io.sockets.emit("newTreasure", { x: currentTreasure.x, y: currentTreasure.y });
-
-            io.sockets.emit("scores", getScores());
+            broadcastScores();
         }
     });
 

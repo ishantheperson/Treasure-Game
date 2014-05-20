@@ -27,6 +27,10 @@
     display: inline-block;
 }
 
+#serverMessage {
+    color: red;
+}
+
 #scores > li:first-child {
     font-weight: bold;
 }
