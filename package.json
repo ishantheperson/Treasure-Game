@@ -1,0 +1,26 @@
+{
+  "name": "treasure-game",
+  "version": "1.0.0",
+  "description": "socket.io multiplayer game ",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.15.3",
+    "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.2.6"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ishantheperson/Treasure-Game.git"
+  },
+  "author": "Ishan Bhargava",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ishantheperson/Treasure-Game/issues"
+  },
+  "homepage": "https://github.com/ishantheperson/Treasure-Game#readme"
+}
