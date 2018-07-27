@@ -2,9 +2,9 @@ The Dragons and Treasure Game
 ==================
 
 
-This is a stupid game I made where two people can control "dragons" (blobs) to get "treasure" (the other blob).
+Two people can control "dragons" (blobs) to get "treasure" (the other blob).
 
-== Buzzword Technologies Used
+Buzzword Technologies Used
 
  - HTML5
  - jQuery
